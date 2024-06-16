@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="ooepQn" name="Delay" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="0" jucerFormatVersion="1"
               pluginFormats="buildAU,buildAUv3,buildStandalone,buildVST3" pluginManufacturer="Jacob Leone"
               pluginDesc="Simple study on a complete delay device" pluginManufacturerCode="Jcob"
               pluginCode="Dlay" cppLanguageStandard="20">
