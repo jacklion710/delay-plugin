@@ -1,3 +1,6 @@
 # Ignore framework modules and compiled binaries
 Builds/
 JuceLibraryCode/
+
+# Ignore project notes
+notes.txt
