@@ -9,6 +9,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+#define VARY_DRY_WET 1 // Switch between different dry wet implementations
+
 //==============================================================================
 DelayAudioProcessor::DelayAudioProcessor() :
     AudioProcessor(
@@ -170,8 +172,19 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
         float wetL = delayLine.popSample(0);
         float wetR = delayLine.popSample(1);
         
-        channelDataL[sample] = (dryL + wetL) * params.gain;
-        channelDataR[sample] = (dryR + wetR) * params.gain;
+        // Dry/wet mixing
+        #if VARY_DRY_WET
+                // Dry/wet where dry and wet are both varied
+                float mixL = dryL * (1.0f - params.mix) + wetL * params.mix;
+                float mixR = dryR * (1.0f - params.mix) + wetR * params.mix;
+        #else
+                // Dry/wet where dry is constant and wet is varied
+                float mixL = dryL + wetL * params.mix;
+                float mixR = dryR + wetR * params.mix;
+        #endif
+        
+        channelDataL[sample] = mixL * params.gain;
+        channelDataR[sample] = mixR * params.gain;
         
     }
 }
