@@ -10,17 +10,13 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-DelayAudioProcessor::DelayAudioProcessor()
-#ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
-                       )
-#endif
+DelayAudioProcessor::DelayAudioProcessor() : // This Line
+    AudioProcessor(
+                   BusesProperties()
+                   .withInput("Input", juce::AudioChannelSet::stereo(), true)
+                   .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+                   ),
+                   params(apvts)
 {
 }
 
@@ -93,8 +89,20 @@ void DelayAudioProcessor::changeProgramName (int index, const juce::String& newN
 //==============================================================================
 void DelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+    params.prepareToPlay(sampleRate);
+    params.reset();
+    
+    juce::dsp::ProcessSpec spec;
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = juce::uint32(samplesPerBlock);
+    spec.numChannels = 2;
+    
+    delayLine.prepare(spec);
+    
+    double numSamples = Parameters::maxDelayTime / 1000.0 * sampleRate;
+    int maxDelayInSamples = int(std::ceil(numSamples));
+    delayLine.setMaximumDelayInSamples(maxDelayInSamples);
+    delayLine.reset();
 }
 
 void DelayAudioProcessor::releaseResources()
@@ -115,19 +123,34 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
+    
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
     
-    float gainInDecibels = -6.0f;
+    params.update();
     
-    float gain = juce::Decibels::decibelsToGain(gainInDecibels);
+    float sampleRate = float(getSampleRate());
+    float delayInSamples = params.delayTime / 1000.0f * sampleRate;
+    delayLine.setDelay(delayInSamples);
     
-    for (int channel = 0; channel < totalNumInputChannels; ++channel) {
-        auto* channelData = buffer.getWritePointer(channel);
+    float* channelDataL = buffer.getWritePointer(0);
+    float* channelDataR = buffer.getWritePointer(1);
         
-        for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
-            channelData[sample] *= gain;
-        }
+    for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
+        params.smoothen();
+        
+        float dryL = channelDataL[sample];
+        float dryR = channelDataR[sample];
+        
+        delayLine.pushSample(0, dryL);
+        delayLine.pushSample(1, dryR);
+        
+        float wetL = delayLine.popSample(0);
+        float wetR = delayLine.popSample(1);
+        
+        channelDataL[sample] = (dryL + wetL) * params.gain;
+        channelDataR[sample] = (dryR + wetR) * params.gain;
+        
     }
 }
 
@@ -145,15 +168,15 @@ juce::AudioProcessorEditor* DelayAudioProcessor::createEditor()
 //==============================================================================
 void DelayAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    copyXmlToBinary(*apvts.copyState().createXml(), destData);
 }
 
 void DelayAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+    std::unique_ptr<juce::XmlElement> xml(getXmlFromBinary(data, sizeInBytes));
+    if (xml.get() != nullptr && xml->hasTagName(apvts.state.getType())) {
+        apvts.replaceState(juce::ValueTree::fromXml(*xml));
+    }
 }
 
 //==============================================================================
@@ -161,4 +184,16 @@ void DelayAudioProcessor::setStateInformation (const void* data, int sizeInBytes
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new DelayAudioProcessor();
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout
+    Parameters::createParameterLayout()
+{
+        juce::AudioProcessorValueTreeState::ParameterLayout layout;
+        
+        layout.add(std::make_unique<juce::AudioParameterFloat>(gainParamID, "Output Gain", juce::NormalisableRange<float> { -12.0f, 12.0f }, 0.0f));
+        
+        layout.add(std::make_unique<juce::AudioParameterFloat>(delayTimeParamID, "Delay Time", juce::NormalisableRange<float> { minDelayTime, maxDelayTime }, 100.0f));
+        
+        return layout;
 }
