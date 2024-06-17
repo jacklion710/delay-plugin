@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-DelayAudioProcessor::DelayAudioProcessor() : // This Line
+DelayAudioProcessor::DelayAudioProcessor() :
     AudioProcessor(
                    BusesProperties()
                    .withInput("Input", juce::AudioChannelSet::stereo(), true)
@@ -18,6 +18,22 @@ DelayAudioProcessor::DelayAudioProcessor() : // This Line
                    ),
                    params(apvts)
 {
+}
+
+static juce::String stringFromMilliseconds(float value, int)
+{
+    if (value < 10.0f) {
+        return juce::String(value, 2) + " ms";
+    } else if (value < 100.0f) {
+        return juce::String(int(value)) + " ms";
+    } else {
+        return juce::String(value * 0.001f, 2) + " s";
+    }
+}
+
+static juce::String stringFromDecibels(float value, int)
+{
+    return juce::String(value, 1) + " db";
 }
 
 DelayAudioProcessor::~DelayAudioProcessor()
@@ -130,8 +146,6 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
     params.update();
     
     float sampleRate = float(getSampleRate());
-    float delayInSamples = params.delayTime / 1000.0f * sampleRate;
-    delayLine.setDelay(delayInSamples);
     
     float* channelDataL = buffer.getWritePointer(0);
     float* channelDataR = buffer.getWritePointer(1);
@@ -139,6 +153,9 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
     for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
         params.smoothen();
         
+        float delayInSamples = params.delayTime / 1000.0f * sampleRate;
+        delayLine.setDelay(delayInSamples);
+
         float dryL = channelDataL[sample];
         float dryR = channelDataR[sample];
         
@@ -191,9 +208,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout
 {
         juce::AudioProcessorValueTreeState::ParameterLayout layout;
         
-        layout.add(std::make_unique<juce::AudioParameterFloat>(gainParamID, "Output Gain", juce::NormalisableRange<float> { -12.0f, 12.0f }, 0.0f));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(gainParamID, "Output Gain", juce::NormalisableRange<float> { -12.0f, 12.0f }, 0.0f, juce::AudioParameterFloatAttributes().withStringFromValueFunction(stringFromDecibels)));
         
-        layout.add(std::make_unique<juce::AudioParameterFloat>(delayTimeParamID, "Delay Time", juce::NormalisableRange<float> { minDelayTime, maxDelayTime }, 100.0f));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(delayTimeParamID, "Delay Time", juce::NormalisableRange<float> { minDelayTime, maxDelayTime, 0.001f, 0.25f }, 100.0f, juce::AudioParameterFloatAttributes().withStringFromValueFunction(stringFromMilliseconds)));
         
         return layout;
 }
