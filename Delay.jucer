@@ -7,6 +7,8 @@
               pluginCode="Dlay" cppLanguageStandard="20">
   <MAINGROUP id="vUvmUw" name="Delay">
     <GROUP id="{5F7F17DC-D27F-EB34-F608-1900A7397A41}" name="Source">
+      <FILE id="A3Wf59" name="RotaryKnob.cpp" compile="1" resource="0" file="Source/RotaryKnob.cpp"/>
+      <FILE id="hve3xu" name="RotaryKnob.h" compile="0" resource="0" file="Source/RotaryKnob.h"/>
       <FILE id="xJac9e" name="Parameters.cpp" compile="1" resource="0" file="Source/Parameters.cpp"/>
       <FILE id="gn9rgx" name="Parameters.h" compile="0" resource="0" file="Source/Parameters.h"/>
       <FILE id="jqDzU4" name="PluginProcessor.cpp" compile="1" resource="0"
