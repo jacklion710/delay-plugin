@@ -35,7 +35,6 @@ DelayAudioProcessorEditor::~DelayAudioProcessorEditor()
 
 void DelayAudioProcessorEditor::paint (juce::Graphics& g)
 {
-
     g.fillAll (Colors::background);
     
     auto rect = getLocalBounds().withHeight(40);
@@ -51,7 +50,10 @@ void DelayAudioProcessorEditor::paint (juce::Graphics& g)
     auto noise = juce::ImageCache::getFromMemory(BinaryData::Noise_png, BinaryData::Noise_pngSize);
     auto fillType = juce::FillType(noise, juce::AffineTransform::scale(0.5f));
     g.setFillType(fillType);
-    g.fillRect(getLocalBounds());
+    
+    // Draw the noise texture only in the area below the header
+    auto noiseArea = getLocalBounds().withTrimmedTop(rect.getHeight());
+    g.fillRect(noiseArea);
 }
 
 void DelayAudioProcessorEditor::resized()
