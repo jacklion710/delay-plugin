@@ -19,11 +19,16 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p)
     outputGroup.addAndMakeVisible(mixKnob);
     addAndMakeVisible(outputGroup);
     
+    setLookAndFeel(&mainLF);
+    
+//    gainKnob.slider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::green); // Change a sliders color
+    
     setSize (500, 330);
 }
 
 DelayAudioProcessorEditor::~DelayAudioProcessorEditor()
 {
+    setLookAndFeel(nullptr);
 }
 
 void DelayAudioProcessorEditor::paint (juce::Graphics& g)
