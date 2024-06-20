@@ -8,8 +8,12 @@
   <MAINGROUP id="vUvmUw" name="Delay">
     <GROUP id="{E0ED1178-0BDE-D3EB-6235-719E175EABD6}" name="Assets">
       <FILE id="sSmXN6" name="Lato-Medium.ttf" compile="0" resource="1" file="../../../Desktop/The Complete Beginner's Guide to Audio Plug-in Development/getting-started-book/Resources/Lato-Medium.ttf"/>
+      <FILE id="Pcr7LI" name="Noise.png" compile="0" resource="1" file="../../../Desktop/The Complete Beginner's Guide to Audio Plug-in Development/getting-started-book/Resources/Noise.png"/>
+      <FILE id="mw32UD" name="Logo.png" compile="0" resource="1" file="../../../Desktop/The Complete Beginner's Guide to Audio Plug-in Development/getting-started-book/Resources/Logo.png"/>
     </GROUP>
     <GROUP id="{5F7F17DC-D27F-EB34-F608-1900A7397A41}" name="Source">
+      <FILE id="PetI6c" name="ProtectYourEars.h" compile="0" resource="0"
+            file="Source/ProtectYourEars.h"/>
       <FILE id="rt581U" name="LookAndFeel.cpp" compile="1" resource="0" file="Source/LookAndFeel.cpp"/>
       <FILE id="u4s82M" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
       <FILE id="A3Wf59" name="RotaryKnob.cpp" compile="1" resource="0" file="Source/RotaryKnob.cpp"/>

@@ -8,8 +8,9 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "ProtectYourEars.h"
 
-#define VARY_DRY_WET 1 // Switch between different dry wet implementations
+#define VARY_DRY_WET 0 // Switch between different dry wet implementations
 
 //==============================================================================
 DelayAudioProcessor::DelayAudioProcessor() :
@@ -183,12 +184,14 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
         
         float wetL = delayLine.popSample(0);
         float wetR = delayLine.popSample(1);
+        wetL += delayLine.popSample(0, delayInSamples * 2.0f, false) * 0.7f;
+        wetR += delayLine.popSample(0, delayInSamples * 2.0f, false) * 0.7f;
         
         // Dry/wet mixing
         #if VARY_DRY_WET
                 // Dry/wet where dry and wet are both varied
-                float mixL = dryL * (1.0f - params.mix) + wetL * params.mix;
-                float mixR = dryR * (1.0f - params.mix) + wetR * params.mix;
+                float mixL = ((dryL * (1.0f - params.mix)) + wetL) * params.mix;
+                float mixR = ((dryR * (1.0f - params.mix)) + wetR) * params.mix;
         #else
                 // Dry/wet where dry is constant and wet is varied
                 float mixL = dryL + wetL * params.mix;
@@ -199,6 +202,9 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
         channelDataR[sample] = mixR * params.gain;
         
     }
+    #if JUCE_DEBUG
+        protectYourEars(buffer);
+    #endif
 }
 
 //==============================================================================
@@ -246,6 +252,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout
         
         // Dry/Wet Mix parameter
         layout.add(std::make_unique<juce::AudioParameterFloat>(mixParamID, "Mix", juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f), 100.0f, juce::AudioParameterFloatAttributes().withStringFromValueFunction(stringFromPercent)));
+        
+        // Feedback parameter
+        layout.add(std::make_unique<juce::AudioParameterFloat>(feedbackParamID, "Feedback", juce::NormalisableRange<float>(0.0f, 100.0f, 1.0f), 0.0f, juce::AudioParameterFloatAttributes().withStringFromValueFunction(stringFromPercent)));
         
         return layout;
 }
