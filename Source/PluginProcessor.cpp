@@ -135,6 +135,9 @@ void DelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     
     delayLine.prepare(spec);
     
+    feedbackL = 0.0f;
+    feedbackR = 0.0f;
+    
     double numSamples = Parameters::maxDelayTime / 1000.0 * sampleRate;
     int maxDelayInSamples = int(std::ceil(numSamples));
     delayLine.setMaximumDelayInSamples(maxDelayInSamples);
@@ -179,24 +182,19 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
         float dryL = channelDataL[sample];
         float dryR = channelDataR[sample];
         
-        delayLine.pushSample(0, dryL);
-        delayLine.pushSample(1, dryR);
+        delayLine.pushSample(0, dryL + feedbackL);
+        delayLine.pushSample(1, dryR + feedbackR);
         
         float wetL = delayLine.popSample(0);
         float wetR = delayLine.popSample(1);
-        wetL += delayLine.popSample(0, delayInSamples * 2.0f, false) * 0.7f;
-        wetR += delayLine.popSample(0, delayInSamples * 2.0f, false) * 0.7f;
         
-        // Dry/wet mixing
-        #if VARY_DRY_WET
-                // Dry/wet where dry and wet are both varied
-                float mixL = ((dryL * (1.0f - params.mix)) + wetL) * params.mix;
-                float mixR = ((dryR * (1.0f - params.mix)) + wetR) * params.mix;
-        #else
-                // Dry/wet where dry is constant and wet is varied
-                float mixL = dryL + wetL * params.mix;
-                float mixR = dryR + wetR * params.mix;
-        #endif
+        feedbackL = wetL * params.feedback;
+        feedbackR = wetR * params.feedback;
+
+        // Dry/wet where dry is constant and wet is varied
+
+        float mixL = dryL + wetL * params.mix;
+        float mixR = dryR + wetR * params.mix;
         
         channelDataL[sample] = mixL * params.gain;
         channelDataR[sample] = mixR * params.gain;

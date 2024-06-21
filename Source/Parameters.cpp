@@ -19,6 +19,7 @@ void Parameters::update() noexcept
 {
     gainSmoother.setTargetValue(juce::Decibels::decibelsToGain(gainParam->get()));
     feedbackSmoother.setTargetValue(feedbackParam->get() * 0.01f);
+    mixSmoother.setTargetValue(mixParam->get() * 0.01f);
 
     targetDelayTime = delayTimeParam->get();
     if (delayTime == 0.0f) {

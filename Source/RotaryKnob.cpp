@@ -22,6 +22,7 @@ RotaryKnob::RotaryKnob(const juce::String& text, juce::AudioProcessorValueTreeSt
     slider.getProperties().set("drawFromMiddle", drawFromMiddle);
     
     setSize(70, 110);
+    
 }
 
 RotaryKnob::~RotaryKnob()
