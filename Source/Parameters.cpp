@@ -1,4 +1,5 @@
 #include "Parameters.h"
+#include "DSP.h"
 
 template<typename T>
 static void castParameter(juce::AudioProcessorValueTreeState& apvts, const juce::ParameterID& id, T& destination)
@@ -13,6 +14,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
     castParameter(apvts, delayTimeParamID, delayTimeParam);
     castParameter(apvts, mixParamID, mixParam);
     castParameter(apvts, feedbackParamID, feedbackParam);
+    castParameter(apvts, stereoParamID, stereoParam);
 }
 
 void Parameters::update() noexcept
@@ -34,6 +36,7 @@ void Parameters::prepareToPlay(double sampleRate) noexcept
     feedbackSmoother.reset(sampleRate, duration);
     coeff = 1.0f - std::exp(-1.0f / (0.2f * float(sampleRate)));
     mixSmoother.reset(sampleRate, duration);
+    stereoSmoother.reset(sampleRate, duration);
 }
 
 void Parameters::reset() noexcept
@@ -47,6 +50,7 @@ void Parameters::reset() noexcept
       juce::Decibels::decibelsToGain(gainParam->get()));
     mixSmoother.setCurrentAndTargetValue(mixParam->get() * 0.01f);
     feedbackSmoother.setCurrentAndTargetValue(feedbackParam->get() * 0.01f);
+    stereoSmoother.setCurrentAndTargetValue(stereoParam->get() * 0.01f);
 }
 
 void Parameters::smoothen() noexcept
@@ -55,4 +59,5 @@ void Parameters::smoothen() noexcept
     delayTime += (targetDelayTime - delayTime) * coeff;
     mix = mixSmoother.getNextValue();
     feedback = feedbackSmoother.getNextValue();
+    panningEqualPower(stereoSmoother.getNextValue(), panL, panR);
 }
