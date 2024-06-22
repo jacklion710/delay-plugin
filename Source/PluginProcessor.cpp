@@ -319,7 +319,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout
         layout.add(std::make_unique<juce::AudioParameterFloat>(lowCutParamID, "Low Cut", juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 0.3f), 20.0f, juce::AudioParameterFloatAttributes().withStringFromValueFunction(stringFromHz).withValueFromStringFunction(hzFromString)));
         
         // Highcut parameter
-        layout.add(std::make_unique<juce::AudioParameterFloat>(lowCutParamID, "High Cut", juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 0.3f), 20000.0f, juce::AudioParameterFloatAttributes().withStringFromValueFunction(stringFromHz).withValueFromStringFunction(hzFromString)));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(highCutParamID, "High Cut", juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 0.3f), 20000.0f, juce::AudioParameterFloatAttributes().withStringFromValueFunction(stringFromHz).withValueFromStringFunction(hzFromString)));
         
         return layout;
 }
