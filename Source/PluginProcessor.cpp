@@ -157,6 +157,9 @@ void DelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     feedbackL = 0.0f;
     feedbackR = 0.0f;
     
+    lastLowCut = -1.0f;
+    lastHighCut = -1.0f;
+    
     double numSamples = Parameters::maxDelayTime / 1000.0 * sampleRate;
     int maxDelayInSamples = int(std::ceil(numSamples));
     delayLine.setMaximumDelayInSamples(maxDelayInSamples);
@@ -217,7 +220,14 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
             float delayInSamples = params.delayTime / 1000.0f * sampleRate;
             delayLine.setDelay(delayInSamples);
             
-            lowCutFilter.setCutoffFrequency(params.lowCut);
+            if (params.lowCut != lastLowCut) {
+                lowCutFilter.setCutoffFrequency(params.lowCut);
+                lastLowCut = params.lowCut;
+            }
+            if (params.highCut != lastHighCut) {
+                highCutFilter.setCutoffFrequency(params.highCut);
+                lastHighCut = params.highCut;
+            }
             highCutFilter.setCutoffFrequency(params.highCut);
             
             float dryL = inputDataL[sample];
@@ -239,7 +249,7 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
             feedbackR = lowCutFilter.processSample(1, feedbackR);
             feedbackR = highCutFilter.processSample(1, feedbackR);
 
-            // Dry/wet where dry is constant and wet is varied            
+            // Dry/wet where dry is constant and wet is varied
             float mixL = dryL + wetL * params.mix;
             float mixR = dryR + wetR * params.mix;
             

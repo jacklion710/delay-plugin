@@ -71,5 +71,8 @@ private:
     float feedbackL = 0.0f;
     float feedbackR = 0.0f;
     
+    float lastLowCut = -1.0f;
+    float lastHighCut = -1.0f;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayAudioProcessor)
 };
