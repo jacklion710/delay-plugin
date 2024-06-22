@@ -15,6 +15,8 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
     castParameter(apvts, mixParamID, mixParam);
     castParameter(apvts, feedbackParamID, feedbackParam);
     castParameter(apvts, stereoParamID, stereoParam);
+    castParameter(apvts, lowCutParamID, lowCutParam);
+    castParameter(apvts, highCutParamID, highCutParam);
 }
 
 void Parameters::update() noexcept
@@ -22,6 +24,8 @@ void Parameters::update() noexcept
     gainSmoother.setTargetValue(juce::Decibels::decibelsToGain(gainParam->get()));
     feedbackSmoother.setTargetValue(feedbackParam->get() * 0.01f);
     mixSmoother.setTargetValue(mixParam->get() * 0.01f);
+    lowCut = lowCutSmoother.getNextValue();
+    highCut = highCutSmoother.getNextValue();
 
     targetDelayTime = delayTimeParam->get();
     if (delayTime == 0.0f) {
@@ -37,6 +41,8 @@ void Parameters::prepareToPlay(double sampleRate) noexcept
     coeff = 1.0f - std::exp(-1.0f / (0.2f * float(sampleRate)));
     mixSmoother.reset(sampleRate, duration);
     stereoSmoother.reset(sampleRate, duration);
+    lowCutSmoother.reset(sampleRate, duration);
+    highCutSmoother.reset(sampleRate, duration);
 }
 
 void Parameters::reset() noexcept
@@ -45,12 +51,16 @@ void Parameters::reset() noexcept
     delayTime = 0.0f;
     mix = 1.0f;
     feedback = 0.0f;
+    lowCut = 20.0f;
+    highCut = 20000.0f;
     
     gainSmoother.setCurrentAndTargetValue(
       juce::Decibels::decibelsToGain(gainParam->get()));
     mixSmoother.setCurrentAndTargetValue(mixParam->get() * 0.01f);
     feedbackSmoother.setCurrentAndTargetValue(feedbackParam->get() * 0.01f);
     stereoSmoother.setCurrentAndTargetValue(stereoParam->get() * 0.01f);
+    lowCutSmoother.setCurrentAndTargetValue(lowCutParam->get());
+    highCutSmoother.setCurrentAndTargetValue(highCutParam->get());
 }
 
 void Parameters::smoothen() noexcept
@@ -60,4 +70,6 @@ void Parameters::smoothen() noexcept
     mix = mixSmoother.getNextValue();
     feedback = feedbackSmoother.getNextValue();
     panningEqualPower(stereoSmoother.getNextValue(), panL, panR);
+    lowCut = lowCutSmoother.getNextValue();
+    highCut = highCutSmoother.getNextValue();
 }
