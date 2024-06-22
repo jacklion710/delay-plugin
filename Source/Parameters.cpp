@@ -17,6 +17,8 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
     castParameter(apvts, stereoParamID, stereoParam);
     castParameter(apvts, lowCutParamID, lowCutParam);
     castParameter(apvts, highCutParamID, highCutParam);
+    castParameter(apvts, tempoSyncParamID, tempoSyncParam);
+    castParameter(apvts, delayNoteParamID, delayNoteParam);
 }
 
 void Parameters::update() noexcept

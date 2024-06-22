@@ -342,5 +342,29 @@ juce::AudioProcessorValueTreeState::ParameterLayout
         // Highcut parameter
         layout.add(std::make_unique<juce::AudioParameterFloat>(highCutParamID, "High Cut", juce::NormalisableRange<float>(20.0f, 20000.0f, 1.0f, 0.3f), 20000.0f, juce::AudioParameterFloatAttributes().withStringFromValueFunction(stringFromHz).withValueFromStringFunction(hzFromString)));
         
+        // Tempo sync parameter
+        layout.add(std::make_unique<juce::AudioParameterBool>(tempoSyncParamID, "Tempo Sync", false));
+        
+        juce::StringArray noteLengths = {
+            "1/32",
+            "1/15 trip",
+            "1/32 dot",
+            "1/16",
+            "1/8 trip",
+            "1/16 dot",
+            "1/8",
+            "1/4 trip",
+            "1/8 dot",
+            "1/4",
+            "1/2 trip",
+            "1/4 dot",
+            "1/2",
+            "1/1 trip",
+            "1/2 dot",
+            "1/1",
+        };
+        
+        layout.add(std::make_unique<juce::AudioParameterChoice>(delayNoteParamID, "Delay Note", noteLengths, 9));
+        
         return layout;
 }
