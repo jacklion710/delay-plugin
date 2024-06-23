@@ -20,6 +20,8 @@
       <FILE id="A3Wf59" name="RotaryKnob.cpp" compile="1" resource="0" file="Source/RotaryKnob.cpp"/>
       <FILE id="hve3xu" name="RotaryKnob.h" compile="0" resource="0" file="Source/RotaryKnob.h"/>
       <FILE id="xJac9e" name="Parameters.cpp" compile="1" resource="0" file="Source/Parameters.cpp"/>
+      <FILE id="tGygr7" name="Tempo.cpp" compile="1" resource="0" file="Source/Tempo.cpp"/>
+      <FILE id="YyK0Ow" name="Tempo.h" compile="0" resource="0" file="Source/Tempo.h"/>
       <FILE id="gn9rgx" name="Parameters.h" compile="0" resource="0" file="Source/Parameters.h"/>
       <FILE id="jqDzU4" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
