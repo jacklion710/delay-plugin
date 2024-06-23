@@ -12,6 +12,8 @@
       <FILE id="mw32UD" name="Logo.png" compile="0" resource="1" file="../../../Desktop/The Complete Beginner's Guide to Audio Plug-in Development/getting-started-book/Resources/Logo.png"/>
     </GROUP>
     <GROUP id="{5F7F17DC-D27F-EB34-F608-1900A7397A41}" name="Source">
+      <FILE id="xAZZtv" name="LevelMeter.cpp" compile="1" resource="0" file="Source/LevelMeter.cpp"/>
+      <FILE id="hbzFWP" name="LevelMeter.h" compile="0" resource="0" file="Source/LevelMeter.h"/>
       <FILE id="TnA1Ap" name="DelayLine.cpp" compile="1" resource="0" file="Source/DelayLine.cpp"/>
       <FILE id="hvxzzp" name="DelayLine.h" compile="0" resource="0" file="Source/DelayLine.h"/>
       <FILE id="nYjmaW" name="DSP.h" compile="0" resource="0" file="Source/DSP.h"/>
