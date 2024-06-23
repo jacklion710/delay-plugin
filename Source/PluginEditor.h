@@ -6,7 +6,8 @@
 #include "RotaryKnob.h"
 #include "LookAndFeel.h"
 
-class DelayAudioProcessorEditor  : public juce::AudioProcessorEditor
+class DelayAudioProcessorEditor : public juce::AudioProcessorEditor,
+private juce::AudioProcessorParameter::Listener 
 {
 public:
     DelayAudioProcessorEditor (DelayAudioProcessor&);
@@ -16,9 +17,14 @@ public:
     void resized() override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it
+    void parameterValueChanged(int, float) override;
+    void parameterGestureChanged(int, bool) override { }
+    
+    void updateDelayKnobs(bool tempoSyncActive);
+    
     DelayAudioProcessor& audioProcessor;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayAudioProcessorEditor)
     
     RotaryKnob gainKnob{ "Gain", audioProcessor.apvts, gainParamID, true };
     RotaryKnob mixKnob { "Mix", audioProcessor.apvts, mixParamID };
@@ -29,11 +35,12 @@ private:
     RotaryKnob highCutKnob { "High Cut", audioProcessor.apvts, highCutParamID };
     RotaryKnob delayNoteKnob { "Note", audioProcessor.apvts , delayNoteParamID };
 
-    juce::GroupComponent delayGroup, feedbackGroup, outputGroup;
     juce::TextButton tempoSyncButton;
+
     juce::AudioProcessorValueTreeState::ButtonAttachment tempoSyncAttachment { audioProcessor.apvts, tempoSyncParamID.getParamID(), tempoSyncButton };
+    
+    juce::GroupComponent delayGroup, feedbackGroup, outputGroup;
     
     MainLookAndFeel mainLF;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayAudioProcessorEditor)
 };
