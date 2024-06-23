@@ -33,6 +33,8 @@ void Parameters::update() noexcept
     if (delayTime == 0.0f) {
         delayTime = targetDelayTime;
     }
+    delayNote = delayNoteParam->getIndex();
+    tempoSync = tempoSyncParam->get();
 }
 
 void Parameters::prepareToPlay(double sampleRate) noexcept

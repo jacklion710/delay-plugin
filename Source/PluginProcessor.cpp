@@ -140,6 +140,7 @@ void DelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     params.prepareToPlay(sampleRate);
     params.reset();
+    tempo.reset();
     
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;
@@ -198,6 +199,12 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
         buffer.clear (i, 0, buffer.getNumSamples());
     
     params.update();
+    tempo.update(getPlayHead());
+    
+    float syncedTime = float(tempo.getMillisecondsForNoteLength(params.delayNote));
+    if (syncedTime > Parameters::maxDelayTime) {
+        syncedTime = Parameters::maxDelayTime;
+    }
     
     float sampleRate = float(getSampleRate());
     
@@ -217,7 +224,11 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
             params.smoothen();
             
-            float delayInSamples = params.delayTime / 1000.0f * sampleRate;
+//            float delayInSamples = params.delayTime / 1000.0f * sampleRate;
+//            delayLine.setDelay(delayInSamples);
+            
+            float delayTime = params.tempoSync ? syncedTime : params.delayTime;
+            float delayInSamples = delayTime / 1000.0f * sampleRate;
             delayLine.setDelay(delayInSamples);
             
             if (params.lowCut != lastLowCut) {
@@ -260,7 +271,11 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
             params.smoothen();
             
-            float delayInSamples = params.delayTime / 1000.0f * sampleRate;
+//            float delayInSamples = params.delayTime / 1000.0f * sampleRate;
+//            delayLine.setDelay(delayInSamples);
+            
+            float delayTime = params.tempoSync ? syncedTime : params.delayTime;
+            float delayInSamples = delayTime / 1000.0f * sampleRate;
             delayLine.setDelay(delayInSamples);
             
             lowCutFilter.setCutoffFrequency(params.lowCut);

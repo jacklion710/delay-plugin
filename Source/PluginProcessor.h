@@ -1,19 +1,9 @@
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include <JuceHeader.h>
 #include "Parameters.h"
+#include "Tempo.h"
 
-//==============================================================================
-/**
-*/
 class DelayAudioProcessor  : public juce::AudioProcessor
 {
 public:
@@ -62,6 +52,7 @@ private:
     //==============================================================================
     
     Parameters params;
+    Tempo tempo;
     
     juce::dsp::DelayLine<float,
     juce::dsp::DelayLineInterpolationTypes::Linear> delayLine;
