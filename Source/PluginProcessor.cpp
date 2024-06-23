@@ -224,9 +224,6 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
             params.smoothen();
             
-//            float delayInSamples = params.delayTime / 1000.0f * sampleRate;
-//            delayLine.setDelay(delayInSamples);
-            
             float delayTime = params.tempoSync ? syncedTime : params.delayTime;
             float delayInSamples = delayTime / 1000.0f * sampleRate;
             delayLine.setDelay(delayInSamples);
@@ -239,7 +236,6 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
                 highCutFilter.setCutoffFrequency(params.highCut);
                 lastHighCut = params.highCut;
             }
-            highCutFilter.setCutoffFrequency(params.highCut);
             
             float dryL = inputDataL[sample];
             float dryR = inputDataR[sample];
@@ -270,9 +266,6 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
     } else {
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
             params.smoothen();
-            
-//            float delayInSamples = params.delayTime / 1000.0f * sampleRate;
-//            delayLine.setDelay(delayInSamples);
             
             float delayTime = params.tempoSync ? syncedTime : params.delayTime;
             float delayInSamples = delayTime / 1000.0f * sampleRate;
