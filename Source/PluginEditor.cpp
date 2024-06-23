@@ -6,7 +6,8 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p)
 {
     delayGroup.setText("Delay");
     delayGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
-    delayGroup.addAndMakeVisible(delayTimeKnob);
+    delayGroup.addAndMakeVisible(tempoSyncButton);
+    delayGroup.addChildComponent(delayNoteKnob);
     addAndMakeVisible(delayGroup);
     
     feedbackGroup.setText("Feedback");
@@ -30,7 +31,6 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p)
     tempoSyncButton.setClickingTogglesState(true);
     tempoSyncButton.setBounds(0, 0, 70, 27);
     tempoSyncButton.setLookAndFeel(ButtonLookAndFeel::get());
-    delayGroup.addAndMakeVisible(tempoSyncButton);
     
 //    gainKnob.slider.setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::green); // Change a sliders color
     
@@ -90,5 +90,5 @@ void DelayAudioProcessorEditor::resized()
     highCutKnob.setTopLeftPosition(lowCutKnob.getRight() + 20, lowCutKnob.getY());
     delayTimeKnob.setTopLeftPosition(20, 20);
     tempoSyncButton.setTopLeftPosition(20, delayTimeKnob.getBottom() + 10);
-    delayNoteKnob.setTopLeftPosition(20, tempoSyncButton.getBottom() - 5);
+    delayNoteKnob.setTopLeftPosition(delayTimeKnob.getX(), delayTimeKnob.getY());
 }
