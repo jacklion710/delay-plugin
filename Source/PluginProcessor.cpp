@@ -214,6 +214,7 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
     
     params.update();
     tempo.update(getPlayHead());
+    if (params.bypassed) { return; }
     
     float syncedTime = float(tempo.getMillisecondsForNoteLength(params.delayNote));
     if (syncedTime > Parameters::maxDelayTime) {
@@ -307,6 +308,11 @@ void DelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, [[mayb
             
             float outL = mixL * params.gain;
             float outR = mixR * params.gain;
+            
+            if (params.bypassed) {
+                outL = dryL;
+                outR = dryR;
+            }
             
 //            outL = fade;
 //            outR = fade;
@@ -441,6 +447,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout
         // Tempo sync parameter
         layout.add(std::make_unique<juce::AudioParameterBool>(tempoSyncParamID, "Tempo Sync", false));
         
+        // Note lengths
         juce::StringArray noteLengths = {
             "1/32",
             "1/15 trip",
@@ -460,7 +467,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout
             "1/1",
         };
         
+        // Note Length parameter
         layout.add(std::make_unique<juce::AudioParameterChoice>(delayNoteParamID, "Delay Note", noteLengths, 9));
         
+        // Bypass parameter
+        layout.add(std::make_unique<juce::AudioParameterBool>(bypassParamID, "Bypass", false));
+        
         return layout;
+}
+
+juce::AudioProcessorParameter* DelayAudioProcessor::getBypassParameter() const
+{
+    return params.bypassParam;
 }

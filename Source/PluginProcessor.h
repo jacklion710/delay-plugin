@@ -50,6 +50,8 @@ public:
         *this, nullptr, "Parameters", Parameters::createParameterLayout()
     };
     
+    juce::AudioProcessorParameter* getBypassParameter() const override;
+    
     Parameters params;
     
     Measurement levelL, levelR;
@@ -77,7 +79,6 @@ private:
     float coeff = 0.0f;
     float wait = 0.0f;
     float waitInc = 0.0f;
-    
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DelayAudioProcessor)
 };

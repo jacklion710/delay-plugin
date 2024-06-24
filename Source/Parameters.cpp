@@ -19,6 +19,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
     castParameter(apvts, highCutParamID, highCutParam);
     castParameter(apvts, tempoSyncParamID, tempoSyncParam);
     castParameter(apvts, delayNoteParamID, delayNoteParam);
+    castParameter(apvts, bypassParamID, bypassParam);
 }
 
 void Parameters::update() noexcept
@@ -35,6 +36,7 @@ void Parameters::update() noexcept
     }
     delayNote = delayNoteParam->getIndex();
     tempoSync = tempoSyncParam->get();
+    bypassed = bypassParam->get();
 }
 
 void Parameters::prepareToPlay(double sampleRate) noexcept
