@@ -70,7 +70,8 @@ void Parameters::reset() noexcept
 void Parameters::smoothen() noexcept
 {
     gain = gainSmoother.getNextValue();
-    delayTime += (targetDelayTime - delayTime) * coeff;
+//    delayTime += (targetDelayTime - delayTime) * coeff; // Repitch mode
+    delayTime = targetDelayTime; // Fade mode
     mix = mixSmoother.getNextValue();
     feedback = feedbackSmoother.getNextValue();
     panningEqualPower(stereoSmoother.getNextValue(), panL, panR);
