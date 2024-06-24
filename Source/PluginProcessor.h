@@ -4,6 +4,7 @@
 #include "Parameters.h"
 #include "Tempo.h"
 #include "DelayLine.h"
+#include "Measurement.h"
 
 class DelayAudioProcessor  : public juce::AudioProcessor
 {
@@ -51,7 +52,7 @@ public:
     
     Parameters params;
     
-    std::atomic<float> levelL, levelR;
+    Measurement levelL, levelR;
 
 private:
     

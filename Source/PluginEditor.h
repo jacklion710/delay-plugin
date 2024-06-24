@@ -5,6 +5,7 @@
 #include "Parameters.h"
 #include "RotaryKnob.h"
 #include "LookAndFeel.h"
+#include "LevelMeter.h"
 
 class DelayAudioProcessorEditor : public juce::AudioProcessorEditor,
 private juce::AudioProcessorParameter::Listener 
@@ -40,6 +41,8 @@ private:
     juce::AudioProcessorValueTreeState::ButtonAttachment tempoSyncAttachment { audioProcessor.apvts, tempoSyncParamID.getParamID(), tempoSyncButton };
     
     juce::GroupComponent delayGroup, feedbackGroup, outputGroup;
+    
+    LevelMeter meter;
     
     MainLookAndFeel mainLF;
     

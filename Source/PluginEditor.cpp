@@ -1,17 +1,10 @@
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin editor.
-
-  ==============================================================================
-*/
-
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-//==============================================================================
 DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+    : AudioProcessorEditor (&p),
+      audioProcessor (p),
+      meter(p.levelL, p.levelR)
 {
     delayGroup.setText("Delay");
     delayGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
@@ -31,6 +24,7 @@ DelayAudioProcessorEditor::DelayAudioProcessorEditor (DelayAudioProcessor& p)
     outputGroup.setTextLabelPosition(juce::Justification::horizontallyCentred);
     outputGroup.addAndMakeVisible(gainKnob);
     outputGroup.addAndMakeVisible(mixKnob);
+    outputGroup.addAndMakeVisible(meter);
     addAndMakeVisible(outputGroup);
 
     tempoSyncButton.setButtonText("Sync");
@@ -104,6 +98,7 @@ void DelayAudioProcessorEditor::resized()
     stereoKnob.setTopLeftPosition(feedbackKnob.getRight() + 20, 20);
     lowCutKnob.setTopLeftPosition(feedbackKnob.getX(), feedbackKnob.getBottom() + 10);
     highCutKnob.setTopLeftPosition(lowCutKnob.getRight() + 20, lowCutKnob.getY());
+    meter.setBounds(outputGroup.getWidth() - 45, 30, 30, gainKnob.getBottom() - 30);
 }
 
 void DelayAudioProcessorEditor::parameterValueChanged(int, float value)
