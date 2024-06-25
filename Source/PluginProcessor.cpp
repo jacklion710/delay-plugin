@@ -122,16 +122,16 @@ int DelayAudioProcessor::getCurrentProgram()
     return 0;
 }
 
-void DelayAudioProcessor::setCurrentProgram (int index)
+void DelayAudioProcessor::setCurrentProgram (int)
 {
 }
 
-const juce::String DelayAudioProcessor::getProgramName (int index)
+const juce::String DelayAudioProcessor::getProgramName (int)
 {
     return {};
 }
 
-void DelayAudioProcessor::changeProgramName (int index, const juce::String& newName)
+void DelayAudioProcessor::changeProgramName (int, const  juce::String& )
 {
 }
 
@@ -172,7 +172,9 @@ void DelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     fade = 1.0f;
     fadeTarget = 1.0f;
     
-    coeff = 1.0f - std::exp(-1.0f / float(sampleRate)); // 300 ms
+    coeff = 1.0f - std::exp(-1.0f / (0.05 * float(sampleRate))); // 300 ms
+    wait = 0.0f;
+    waitInc = 1.0f / (0.3f * float(sampleRate)); // 300 ms
     
 //    xfade = 0.0f;
 //    xfadeInc = static_cast<float>(1.0 / (0.05 * sampleRate)); // 50 ms
